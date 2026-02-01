@@ -1,15 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CustomersService {
   constructor(private prisma: PrismaService) {}
 
-  // Hämta alla kunder
-  async findAll() {
+  // Hämta alla kunder (filtrerat på team om inte admin)
+  async findAll(teamId?: number | null, isAdmin?: boolean) {
+    const where = isAdmin ? {} : teamId ? { teamId } : {};
     return this.prisma.customer.findMany({
+      where,
+      include: {
+        company: true,
+        owner: {
+          select: { id: true, name: true, email: true },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -29,9 +42,33 @@ export class CustomersService {
 
   // Skapa ny kund
   async create(createCustomerDto: CreateCustomerDto) {
-    return this.prisma.customer.create({
-      data: createCustomerDto,
-    });
+    try {
+      const customer = await this.prisma.customer.create({
+        data: createCustomerDto,
+      });
+
+      // Logga aktivitet
+      await this.prisma.activityLog.create({
+        data: {
+          action: 'created',
+          entityType: 'customer',
+          entityId: customer.id,
+          entityName: customer.name || customer.email,
+        },
+      });
+
+      return customer;
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'En kund med denna e-postadress finns redan',
+        );
+      }
+      throw error;
+    }
   }
 
   // Uppdatera kund
@@ -39,16 +76,38 @@ export class CustomersService {
     // Kolla om kunden finns först
     await this.findOne(id);
 
-    return this.prisma.customer.update({
+    const customer = await this.prisma.customer.update({
       where: { id },
       data: updateCustomerDto,
     });
+
+    // Logga aktivitet
+    await this.prisma.activityLog.create({
+      data: {
+        action: 'updated',
+        entityType: 'customer',
+        entityId: customer.id,
+        entityName: customer.name || customer.email,
+      },
+    });
+
+    return customer;
   }
 
   // Ta bort kund
   async remove(id: number) {
     // Kolla om kunden finns först
-    await this.findOne(id);
+    const customer = await this.findOne(id);
+
+    // Logga aktivitet innan borttagning
+    await this.prisma.activityLog.create({
+      data: {
+        action: 'deleted',
+        entityType: 'customer',
+        entityId: customer.id,
+        entityName: customer.name || customer.email,
+      },
+    });
 
     return this.prisma.customer.delete({
       where: { id },

@@ -7,19 +7,26 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../auth/roles.enum';
 
 @Controller('customers')
+@UseGuards(AuthGuard)
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
-  // GET /customers - Hämta alla kunder
+  // GET /customers - Hämta alla kunder (filtreras baserat på team)
   @Get()
-  findAll() {
-    return this.customersService.findAll();
+  findAll(@Request() req) {
+    return this.customersService.findAll(req.user.teamId, req.user.isAdmin);
   }
 
   // GET /customers/:id - Hämta en kund
@@ -28,14 +35,22 @@ export class CustomersController {
     return this.customersService.findOne(id);
   }
 
-  // POST /customers - Skapa ny kund
+  // POST /customers - Skapa ny kund (kräver sales eller admin)
   @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customersService.create(createCustomerDto);
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.SALES)
+  create(@Body() createCustomerDto: CreateCustomerDto, @Request() req) {
+    return this.customersService.create({
+      ...createCustomerDto,
+      ownerId: req.user.sub,
+      teamId: req.user.teamId,
+    });
   }
 
-  // PUT /customers/:id - Uppdatera kund
+  // PUT /customers/:id - Uppdatera kund (kräver sales eller admin)
   @Put(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.SALES)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCustomerDto: UpdateCustomerDto,
@@ -43,8 +58,10 @@ export class CustomersController {
     return this.customersService.update(id, updateCustomerDto);
   }
 
-  // DELETE /customers/:id - Ta bort kund
+  // DELETE /customers/:id - Ta bort kund (kräver admin)
   @Delete(':id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.SALES)
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.customersService.remove(id);
   }

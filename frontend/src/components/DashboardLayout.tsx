@@ -14,32 +14,64 @@ import {
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   LayoutDashboard,
   Users,
   Building2,
-  Mail,
-  Calendar,
   BarChart3,
   Settings,
   LogOut,
-  Search,
   Bell,
+  Moon,
+  Sun,
+  Monitor,
+  TrendingUp,
+  CheckSquare,
+  Calendar,
 } from "lucide-react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useTheme } from "./ThemeProvider";
+import { useAuth } from "../contexts/AuthContext";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/" },
   { title: "Kunder", icon: Users, path: "/customers" },
   { title: "Företag", icon: Building2, path: "/companies" },
-  { title: "E-post", icon: Mail, path: "/email" },
+  { title: "Affärer", icon: TrendingUp, path: "/deals" },
+  { title: "Uppgifter", icon: CheckSquare, path: "/tasks" },
   { title: "Kalender", icon: Calendar, path: "/calendar" },
   { title: "Rapporter", icon: BarChart3, path: "/reports" },
 ];
 
 export default function DashboardLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+  const { profile, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
+  };
+
+  // Get initials from profile name or email
+  const getInitials = () => {
+    if (profile?.name) {
+      return profile.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
+    }
+    return profile?.email?.slice(0, 2).toUpperCase() || "U";
+  };
 
   return (
     <SidebarProvider>
@@ -80,7 +112,7 @@ export default function DashboardLayout() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton>
+                <SidebarMenuButton onClick={handleLogout}>
                   <LogOut className="h-4 w-4" />
                   <span>Logga ut</span>
                 </SidebarMenuButton>
@@ -89,11 +121,15 @@ export default function DashboardLayout() {
 
             <div className="mt-4 flex items-center gap-3 px-2">
               <Avatar className="h-8 w-8">
-                <AvatarFallback>RA</AvatarFallback>
+                <AvatarFallback>{getInitials()}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">Robert Ångberg</span>
-                <span className="text-xs text-muted-foreground">Admin</span>
+                <span className="text-sm font-medium">
+                  {profile?.name || profile?.email || "Användare"}
+                </span>
+                <span className="text-xs text-muted-foreground capitalize">
+                  {profile?.role || "Användare"}
+                </span>
               </div>
             </div>
           </SidebarFooter>
@@ -103,17 +139,36 @@ export default function DashboardLayout() {
           <header className="flex h-14 items-center justify-between border-b bg-background px-6">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Sök kunder, företag..." className="w-64 pl-8" />
-              </div>
             </div>
             <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    {theme === "light" && <Sun className="h-4 w-4" />}
+                    {theme === "dark" && <Moon className="h-4 w-4" />}
+                    {theme === "system" && <Monitor className="h-4 w-4" />}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setTheme("light")}>
+                    <Sun className="mr-2 h-4 w-4" />
+                    Ljust
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("dark")}>
+                    <Moon className="mr-2 h-4 w-4" />
+                    Mörkt
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setTheme("system")}>
+                    <Monitor className="mr-2 h-4 w-4" />
+                    System
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button variant="ghost" size="icon">
                 <Bell className="h-4 w-4" />
               </Button>
               <Avatar className="h-8 w-8">
-                <AvatarFallback>RA</AvatarFallback>
+                <AvatarFallback>{getInitials()}</AvatarFallback>
               </Avatar>
             </div>
           </header>
