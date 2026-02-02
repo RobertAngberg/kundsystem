@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // API-klient som automatiskt skickar JWT-token med varje request
 async function getAuthHeaders(): Promise<Record<string, string>> {

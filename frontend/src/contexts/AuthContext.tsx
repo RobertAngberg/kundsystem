@@ -34,7 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fetch user profile from our backend
   const fetchProfile = async (userId: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/auth/profile/${userId}`);
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const response = await fetch(`${API_URL}/auth/profile/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setProfile(data);
@@ -94,7 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!error && data.user) {
       // Create profile in our backend
       try {
-        await fetch("http://localhost:3000/auth/profile", {
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+        await fetch(`${API_URL}/auth/profile`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
