@@ -128,25 +128,25 @@
   .gradient-sidebar {
     background: linear-gradient(180deg, var(--sidebar) 0%, oklch(from var(--sidebar) calc(l - 0.03) c h) 100%);
   }
-  
+
   .gradient-header {
     background: linear-gradient(90deg, var(--background) 0%, oklch(from var(--background) l calc(c + 0.01) 260) 50%, var(--background) 100%);
     backdrop-filter: blur(8px);
   }
-  
+
   .gradient-card {
     background: linear-gradient(135deg, var(--card) 0%, oklch(from var(--card) l calc(c + 0.015) 260) 100%);
     border: 1px solid oklch(from var(--border) l c h / 50%);
   }
-  
+
   .gradient-primary {
     background: linear-gradient(135deg, var(--primary) 0%, oklch(from var(--primary) calc(l + 0.1) c calc(h + 20)) 100%);
   }
-  
+
   .glow-primary {
     box-shadow: 0 0 20px oklch(from var(--primary) l c h / 20%);
   }
-  
+
   .glass {
     background: oklch(from var(--background) l c h / 80%);
     backdrop-filter: blur(12px);

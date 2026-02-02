@@ -163,7 +163,7 @@ export default function CompaniesPage() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="h-4 w-4" />
               Lägg till företag
             </Button>
           </DialogTrigger>

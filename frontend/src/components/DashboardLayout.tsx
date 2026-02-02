@@ -78,7 +78,7 @@ export default function DashboardLayout() {
       <div className="flex h-screen w-full">
         <Sidebar className="gradient-sidebar">
           <SidebarHeader className="border-b border-sidebar-border/50 px-6 h-14 flex items-center">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">⚡ KundCRM</h1>
+            <h1 className="text-xl font-bold">⚡ KundCRM</h1>
           </SidebarHeader>
 
           <SidebarContent>
@@ -88,14 +88,14 @@ export default function DashboardLayout() {
                 <SidebarMenu>
                   {menuItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={location.pathname === item.path}>
+                      <SidebarMenuButton asChild isActive={location.pathname === item.path} className="text-[15px]">
                         <Link to={item.path}>
-                          <item.icon className="h-4 w-4" />
+                          <item.icon className="h-5 w-5" />
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}
+                  ))}}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
@@ -104,16 +104,16 @@ export default function DashboardLayout() {
           <SidebarFooter className="border-t border-sidebar-border/50 p-4">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild className="text-[15px]">
                   <Link to="/settings">
-                    <Settings className="h-4 w-4" />
+                    <Settings className="h-5 w-5" />
                     <span>Inställningar</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleLogout}>
-                  <LogOut className="h-4 w-4" />
+                <SidebarMenuButton onClick={handleLogout} className="text-[15px]">
+                  <LogOut className="h-5 w-5" />
                   <span>Logga ut</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -168,11 +168,13 @@ export default function DashboardLayout() {
                 <Bell className="h-4 w-4" />
               </Button>
               <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-purple-400 text-primary-foreground">{getInitials()}</AvatarFallback>
+                <AvatarFallback className="bg-gradient-to-br from-primary to-purple-400 text-primary-foreground">
+                  {getInitials()}
+                </AvatarFallback>
               </Avatar>
             </div>
           </header>
-          <div className="p-6">
+          <div className="p-6 max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>
