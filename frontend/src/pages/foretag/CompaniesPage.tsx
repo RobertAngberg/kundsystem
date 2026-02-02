@@ -37,7 +37,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 
 const ITEMS_PER_PAGE = 10;
