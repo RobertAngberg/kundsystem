@@ -14,7 +14,8 @@ export class CustomersService {
 
   // Hämta alla kunder (endast användarens egen data)
   async findAll(userId: string) {
-    return this.prisma.customer.findMany({
+    console.log('findAll called with userId:', userId);
+    const customers = await this.prisma.customer.findMany({
       where: { ownerId: userId },
       include: {
         company: true,
@@ -24,6 +25,8 @@ export class CustomersService {
       },
       orderBy: { createdAt: 'desc' },
     });
+    console.log('Found customers:', customers.length);
+    return customers;
   }
 
   // Hämta en kund via ID
