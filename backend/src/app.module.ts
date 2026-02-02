@@ -8,6 +8,7 @@ import { DealsModule } from './deals/deals.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ActivityLogModule } from './activity-log/activity-log.module';
 import { TeamsModule } from './teams/teams.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -21,5 +22,6 @@ import { TeamsModule } from './teams/teams.module';
     ActivityLogModule,
     TeamsModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
