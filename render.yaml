@@ -29,7 +29,6 @@ services:
   - type: web
     name: kundsystem-frontend
     runtime: static
-    region: frankfurt
     plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
