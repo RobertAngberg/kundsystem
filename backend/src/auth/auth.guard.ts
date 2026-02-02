@@ -4,11 +4,13 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { supabase } from './supabase';
 import { PrismaService } from '../prisma/prisma.service';
 
-interface AuthenticatedRequest extends Request {
+interface AuthenticatedRequest {
+  headers: {
+    authorization?: string;
+  };
   user?: {
     sub: string;
     email: string;
