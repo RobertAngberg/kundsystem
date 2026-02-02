@@ -26,21 +26,20 @@ export class TasksController {
 
   @Get()
   findAll(@Request() req, @Query('filter') filter?: string) {
-    const { sub: userId, teamId, isAdmin } = req.user;
+    const userId = req.user.sub;
 
     if (filter === 'upcoming') {
-      return this.tasksService.findUpcoming(userId, teamId, isAdmin);
+      return this.tasksService.findUpcoming(userId);
     }
     if (filter === 'overdue') {
-      return this.tasksService.findOverdue(userId, teamId, isAdmin);
+      return this.tasksService.findOverdue(userId);
     }
-    return this.tasksService.findAll(userId, teamId, isAdmin);
+    return this.tasksService.findAll(userId);
   }
 
   @Get('stats')
   getStats(@Request() req) {
-    const { sub: userId, teamId, isAdmin } = req.user;
-    return this.tasksService.getStats(userId, teamId, isAdmin);
+    return this.tasksService.getStats(req.user.sub);
   }
 
   @Get(':id')

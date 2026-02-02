@@ -8,15 +8,10 @@ import type { Task } from '@prisma/client';
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    // Admin ser allt, annars team-data, annars egen data
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : { ownerId };
+  // Hämta alla tasks (endast användarens egen data)
+  async findAll(ownerId: string) {
     return await this.prisma.task.findMany({
-      where,
+      where: { ownerId },
       include: {
         customer: true,
         deal: { include: { customer: true } },
@@ -41,27 +36,20 @@ export class TasksService {
     });
   }
 
-  async findUpcoming(
-    ownerId?: string,
-    teamId?: number | null,
-    isAdmin?: boolean,
-    days: number = 7,
-  ) {
+  async findUpcoming(ownerId: string, days: number = 7) {
     const now = new Date();
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + days);
 
-    const where = {
-      completed: false,
-      dueDate: {
-        gte: now,
-        lte: futureDate,
-      },
-      ...(isAdmin ? {} : teamId ? { teamId } : { ownerId }),
-    };
-
     return await this.prisma.task.findMany({
-      where,
+      where: {
+        ownerId,
+        completed: false,
+        dueDate: {
+          gte: now,
+          lte: futureDate,
+        },
+      },
       include: {
         customer: true,
         deal: { include: { customer: true } },
@@ -71,23 +59,17 @@ export class TasksService {
     });
   }
 
-  async findOverdue(
-    ownerId?: string,
-    teamId?: number | null,
-    isAdmin?: boolean,
-  ) {
+  async findOverdue(ownerId: string) {
     const now = new Date();
 
-    const where = {
-      completed: false,
-      dueDate: {
-        lt: now,
-      },
-      ...(isAdmin ? {} : teamId ? { teamId } : { ownerId }),
-    };
-
     return await this.prisma.task.findMany({
-      where,
+      where: {
+        ownerId,
+        completed: false,
+        dueDate: {
+          lt: now,
+        },
+      },
       include: {
         customer: true,
         deal: { include: { customer: true } },
@@ -199,14 +181,8 @@ export class TasksService {
     });
   }
 
-  async getStats(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : ownerId
-          ? { ownerId }
-          : {};
+  async getStats(ownerId: string) {
+    const where = { ownerId };
     const now = new Date();
     const threeDaysFromNow = new Date();
     threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);

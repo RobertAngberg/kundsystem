@@ -8,15 +8,10 @@ import type { Deal } from '@prisma/client';
 export class DealsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    // Admin ser allt, annars team-data, annars egen data
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : { ownerId };
+  // Hämta alla deals (endast användarens egen data)
+  async findAll(ownerId: string) {
     return await this.prisma.deal.findMany({
-      where,
+      where: { ownerId },
       include: {
         customer: true,
         owner: true,
@@ -35,20 +30,9 @@ export class DealsService {
     });
   }
 
-  async findByStage(
-    stage: string,
-    ownerId?: string,
-    teamId?: number | null,
-    isAdmin?: boolean,
-  ) {
-    // Admin ser allt, annars team-data, annars egen data
-    const where = isAdmin
-      ? { stage }
-      : teamId
-        ? { stage, teamId }
-        : { stage, ownerId };
+  async findByStage(stage: string, ownerId: string) {
     return await this.prisma.deal.findMany({
-      where,
+      where: { stage, ownerId },
       include: {
         customer: true,
         owner: true,
@@ -140,14 +124,8 @@ export class DealsService {
     });
   }
 
-  async getStats(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : ownerId
-          ? { ownerId }
-          : {};
+  async getStats(ownerId: string) {
+    const where = { ownerId };
 
     const deals: Deal[] = await this.prisma.deal.findMany({ where });
 

@@ -21,20 +21,10 @@ export class ActivityLogService {
     });
   }
 
-  async findAll(
-    limit = 50,
-    userId?: string,
-    teamId?: number | null,
-    isAdmin?: boolean,
-  ) {
-    // Admin ser allt, annars team-data, annars egen data
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : { userId };
+  // Hämta aktivitetslogg (endast användarens egen data)
+  async findAll(limit = 50, userId: string) {
     return this.prisma.activityLog.findMany({
-      where,
+      where: { userId },
       take: limit,
       orderBy: { createdAt: 'desc' },
       include: {

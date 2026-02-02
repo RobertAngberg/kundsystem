@@ -26,18 +26,17 @@ export class DealsController {
 
   @Get()
   findAll(@Request() req, @Query('stage') stage?: string) {
-    const { sub: userId, teamId, isAdmin } = req.user;
+    const userId = req.user.sub;
 
     if (stage) {
-      return this.dealsService.findByStage(stage, userId, teamId, isAdmin);
+      return this.dealsService.findByStage(stage, userId);
     }
-    return this.dealsService.findAll(userId, teamId, isAdmin);
+    return this.dealsService.findAll(userId);
   }
 
   @Get('stats')
   getStats(@Request() req) {
-    const { sub: userId, teamId, isAdmin } = req.user;
-    return this.dealsService.getStats(userId, teamId, isAdmin);
+    return this.dealsService.getStats(req.user.sub);
   }
 
   @Get(':id')

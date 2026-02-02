@@ -25,7 +25,7 @@ export class CompaniesController {
 
   @Get()
   findAll(@Request() req) {
-    return this.companiesService.findAll(req.user.sub, req.user.teamId, req.user.isAdmin);
+    return this.companiesService.findAll(req.user.sub);
   }
 
   @Get(':id')

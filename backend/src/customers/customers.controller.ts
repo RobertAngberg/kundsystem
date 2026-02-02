@@ -23,10 +23,10 @@ import { Role } from '../auth/roles.enum';
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
-  // GET /customers - Hämta alla kunder (filtreras baserat på team/ägare)
+  // GET /customers - Hämta alla kunder (endast egen data)
   @Get()
   findAll(@Request() req) {
-    return this.customersService.findAll(req.user.sub, req.user.teamId, req.user.isAdmin);
+    return this.customersService.findAll(req.user.sub);
   }
 
   // GET /customers/:id - Hämta en kund

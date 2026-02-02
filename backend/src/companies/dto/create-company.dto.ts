@@ -35,4 +35,8 @@ export class CreateCompanyDto {
   @IsInt()
   @IsOptional()
   teamId?: number;
+
+  @IsString()
+  @IsOptional()
+  createdById?: string;
 }

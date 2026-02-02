@@ -10,11 +10,6 @@ export class ActivityLogController {
   @Get()
   findAll(@Query('limit') limit?: string, @Request() req?: any) {
     const limitNum = limit ? parseInt(limit, 10) : 50;
-    return this.activityLogService.findAll(
-      limitNum,
-      req.user.sub,
-      req.user.teamId,
-      req.user.isAdmin,
-    );
+    return this.activityLogService.findAll(limitNum, req.user.sub);
   }
 }

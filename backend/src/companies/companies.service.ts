@@ -12,15 +12,10 @@ import { Prisma } from '@prisma/client';
 export class CompaniesService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(userId: string, teamId?: number | null, isAdmin?: boolean) {
-    // Admin ser allt, annars team-data, annars egen data
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : { createdById: userId };
+  // Hämta alla företag (endast användarens egen data)
+  async findAll(userId: string) {
     return this.prisma.company.findMany({
-      where,
+      where: { createdById: userId },
       orderBy: { createdAt: 'desc' },
       include: { customers: true },
     });
