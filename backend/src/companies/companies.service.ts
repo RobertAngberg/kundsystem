@@ -13,7 +13,8 @@ export class CompaniesService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(teamId?: number | null, isAdmin?: boolean) {
-    const where = isAdmin ? {} : teamId ? { teamId } : {};
+    // Om admin eller inget team - visa allt. Annars filtrera på team.
+    const where = isAdmin || !teamId ? {} : { teamId };
     return this.prisma.company.findMany({
       where,
       orderBy: { createdAt: 'desc' },

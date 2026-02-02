@@ -9,14 +9,8 @@ export class DealsService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    // Admin ser allt, annars filtrerar vi på teamId eller ownerId
-    const where = isAdmin
-      ? {}
-      : teamId
-        ? { teamId }
-        : ownerId
-          ? { ownerId }
-          : {};
+    // Om admin eller inget team - visa allt. Annars filtrera på team/owner.
+    const where = isAdmin || !teamId ? {} : { teamId };
     return await this.prisma.deal.findMany({
       where,
       include: {

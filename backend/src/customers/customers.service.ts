@@ -14,7 +14,8 @@ export class CustomersService {
 
   // Hämta alla kunder (filtrerat på team om inte admin)
   async findAll(teamId?: number | null, isAdmin?: boolean) {
-    const where = isAdmin ? {} : teamId ? { teamId } : {};
+    // Om admin eller inget team - visa allt. Annars filtrera på team.
+    const where = isAdmin || !teamId ? {} : { teamId };
     return this.prisma.customer.findMany({
       where,
       include: {
