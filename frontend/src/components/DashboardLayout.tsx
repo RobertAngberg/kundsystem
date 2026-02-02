@@ -95,7 +95,7 @@ export default function DashboardLayout() {
                         </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))}}
+                  ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
