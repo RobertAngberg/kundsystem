@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
 import { Toaster } from "@/components/ui/sonner";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./components/DashboardLayout";
@@ -22,10 +21,9 @@ import RegisterPage from "./pages/auth/RegisterPage";
 
 function App() {
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
             {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
@@ -57,7 +55,6 @@ function App() {
           <Toaster richColors />
         </AuthProvider>
       </BrowserRouter>
-    </ThemeProvider>
   );
 }
 

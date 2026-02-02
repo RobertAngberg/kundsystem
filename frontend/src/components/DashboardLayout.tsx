@@ -15,12 +15,6 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   LayoutDashboard,
   Users,
   Building2,
@@ -28,15 +22,11 @@ import {
   Settings,
   LogOut,
   Bell,
-  Moon,
-  Sun,
-  Monitor,
   TrendingUp,
   CheckSquare,
   Calendar,
 } from "lucide-react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useTheme } from "./ThemeProvider";
 import { useAuth } from "../contexts/AuthContext";
 
 const menuItems = [
@@ -52,7 +42,6 @@ const menuItems = [
 export default function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
   const { profile, signOut } = useAuth();
 
   const handleLogout = async () => {
@@ -77,7 +66,7 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <Sidebar className="gradient-sidebar">
-          <SidebarHeader className="border-b border-sidebar-border/50 px-6 h-14 flex items-center">
+          <SidebarHeader className="border-b border-sidebar-border/50 px-6 h-14 flex items-center justify-center">
             <h1 className="text-xl font-bold">⚡ KundCRM</h1>
           </SidebarHeader>
 
@@ -88,7 +77,11 @@ export default function DashboardLayout() {
                 <SidebarMenu>
                   {menuItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={location.pathname === item.path} className="text-[15px]">
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === item.path}
+                        className="text-[15px]"
+                      >
                         <Link to={item.path}>
                           <item.icon className="h-5 w-5" />
                           <span>{item.title}</span>
@@ -141,29 +134,6 @@ export default function DashboardLayout() {
               <SidebarTrigger />
             </div>
             <div className="flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hover:bg-primary/10">
-                    {theme === "light" && <Sun className="h-4 w-4" />}
-                    {theme === "dark" && <Moon className="h-4 w-4" />}
-                    {theme === "system" && <Monitor className="h-4 w-4" />}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="glass">
-                  <DropdownMenuItem onClick={() => setTheme("light")}>
-                    <Sun className="mr-2 h-4 w-4" />
-                    Ljust
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("dark")}>
-                    <Moon className="mr-2 h-4 w-4" />
-                    Mörkt
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme("system")}>
-                    <Monitor className="mr-2 h-4 w-4" />
-                    System
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
               <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                 <Bell className="h-4 w-4" />
               </Button>
