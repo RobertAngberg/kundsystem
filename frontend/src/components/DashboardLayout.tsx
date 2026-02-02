@@ -77,7 +77,7 @@ export default function DashboardLayout() {
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <Sidebar>
-          <SidebarHeader className="border-b px-6 py-4">
+          <SidebarHeader className="border-b px-6 h-14 flex items-center">
             <h1 className="text-xl font-bold">⚡ KundCRM</h1>
           </SidebarHeader>
 
