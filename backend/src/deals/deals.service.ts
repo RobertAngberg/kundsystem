@@ -9,8 +9,12 @@ export class DealsService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    // Om admin eller inget team - visa allt. Annars filtrera på team/owner.
-    const where = isAdmin || !teamId ? {} : { teamId };
+    // Admin ser allt, annars team-data, annars egen data
+    const where = isAdmin
+      ? {}
+      : teamId
+        ? { teamId }
+        : { ownerId };
     return await this.prisma.deal.findMany({
       where,
       include: {
@@ -37,13 +41,12 @@ export class DealsService {
     teamId?: number | null,
     isAdmin?: boolean,
   ) {
+    // Admin ser allt, annars team-data, annars egen data
     const where = isAdmin
       ? { stage }
       : teamId
         ? { stage, teamId }
-        : ownerId
-          ? { stage, ownerId }
-          : { stage };
+        : { stage, ownerId };
     return await this.prisma.deal.findMany({
       where,
       include: {

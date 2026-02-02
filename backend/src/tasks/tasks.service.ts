@@ -9,8 +9,12 @@ export class TasksService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(ownerId?: string, teamId?: number | null, isAdmin?: boolean) {
-    // Om admin eller inget team - visa allt. Annars filtrera på team.
-    const where = isAdmin || !teamId ? {} : { teamId };
+    // Admin ser allt, annars team-data, annars egen data
+    const where = isAdmin
+      ? {}
+      : teamId
+        ? { teamId }
+        : { ownerId };
     return await this.prisma.task.findMany({
       where,
       include: {
@@ -53,7 +57,7 @@ export class TasksService {
         gte: now,
         lte: futureDate,
       },
-      ...(isAdmin || !teamId ? {} : { teamId }),
+      ...(isAdmin ? {} : teamId ? { teamId } : { ownerId }),
     };
 
     return await this.prisma.task.findMany({
@@ -79,7 +83,7 @@ export class TasksService {
       dueDate: {
         lt: now,
       },
-      ...(isAdmin || !teamId ? {} : { teamId }),
+      ...(isAdmin ? {} : teamId ? { teamId } : { ownerId }),
     };
 
     return await this.prisma.task.findMany({

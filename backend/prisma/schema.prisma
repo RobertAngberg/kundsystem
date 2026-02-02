@@ -30,20 +30,22 @@ model Customer {
 }
 
 model Company {
-  id        Int        @id @default(autoincrement())
-  name      String
-  orgNumber String?    @unique
-  email     String?
-  phone     String?
-  website   String?
-  address   String?
-  city      String?
-  zipCode   String?
-  teamId    Int?       // Multi-tenant: vilket team företaget tillhör
-  team      Team?      @relation(fields: [teamId], references: [id])
-  customers Customer[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          Int        @id @default(autoincrement())
+  name        String
+  orgNumber   String?    @unique
+  email       String?
+  phone       String?
+  website     String?
+  address     String?
+  city        String?
+  zipCode     String?
+  createdById String?    // Supabase user id - vem skapade företaget
+  createdBy   Profile?   @relation(fields: [createdById], references: [id])
+  teamId      Int?       // Multi-tenant: vilket team företaget tillhör
+  team        Team?      @relation(fields: [teamId], references: [id])
+  customers   Customer[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Activity {
@@ -64,6 +66,7 @@ model Profile {
   teamId       Int?          // Multi-tenant: vilket team användaren tillhör
   team         Team?         @relation(fields: [teamId], references: [id])
   customers    Customer[]
+  companies    Company[]
   deals        Deal[]
   tasks        Task[]
   activityLogs ActivityLog[]

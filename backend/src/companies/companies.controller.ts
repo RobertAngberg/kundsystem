@@ -25,7 +25,7 @@ export class CompaniesController {
 
   @Get()
   findAll(@Request() req) {
-    return this.companiesService.findAll(req.user.teamId, req.user.isAdmin);
+    return this.companiesService.findAll(req.user.sub, req.user.teamId, req.user.isAdmin);
   }
 
   @Get(':id')
@@ -39,6 +39,7 @@ export class CompaniesController {
   create(@Body() createCompanyDto: CreateCompanyDto, @Request() req) {
     return this.companiesService.create({
       ...createCompanyDto,
+      createdById: req.user.sub,
       teamId: req.user.teamId,
     });
   }

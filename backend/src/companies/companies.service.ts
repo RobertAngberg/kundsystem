@@ -12,9 +12,13 @@ import { Prisma } from '@prisma/client';
 export class CompaniesService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(teamId?: number | null, isAdmin?: boolean) {
-    // Om admin eller inget team - visa allt. Annars filtrera på team.
-    const where = isAdmin || !teamId ? {} : { teamId };
+  async findAll(userId: string, teamId?: number | null, isAdmin?: boolean) {
+    // Admin ser allt, annars team-data, annars egen data
+    const where = isAdmin
+      ? {}
+      : teamId
+        ? { teamId }
+        : { createdById: userId };
     return this.prisma.company.findMany({
       where,
       orderBy: { createdAt: 'desc' },

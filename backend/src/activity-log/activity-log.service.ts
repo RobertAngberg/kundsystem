@@ -21,8 +21,20 @@ export class ActivityLogService {
     });
   }
 
-  async findAll(limit = 50) {
+  async findAll(
+    limit = 50,
+    userId?: string,
+    teamId?: number | null,
+    isAdmin?: boolean,
+  ) {
+    // Admin ser allt, annars team-data, annars egen data
+    const where = isAdmin
+      ? {}
+      : teamId
+        ? { teamId }
+        : { userId };
     return this.prisma.activityLog.findMany({
+      where,
       take: limit,
       orderBy: { createdAt: 'desc' },
       include: {
