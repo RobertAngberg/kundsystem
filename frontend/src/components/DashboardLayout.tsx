@@ -76,9 +76,9 @@ export default function DashboardLayout() {
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
-        <Sidebar>
-          <SidebarHeader className="border-b px-6 h-14 flex items-center">
-            <h1 className="text-xl font-bold">⚡ KundCRM</h1>
+        <Sidebar className="gradient-sidebar">
+          <SidebarHeader className="border-b border-sidebar-border/50 px-6 h-14 flex items-center">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">⚡ KundCRM</h1>
           </SidebarHeader>
 
           <SidebarContent>
@@ -101,7 +101,7 @@ export default function DashboardLayout() {
             </SidebarGroup>
           </SidebarContent>
 
-          <SidebarFooter className="border-t p-4">
+          <SidebarFooter className="border-t border-sidebar-border/50 p-4">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
@@ -135,21 +135,21 @@ export default function DashboardLayout() {
           </SidebarFooter>
         </Sidebar>
 
-        <main className="flex-1 overflow-auto bg-muted/30">
-          <header className="flex h-14 items-center justify-between border-b bg-background px-6">
+        <main className="flex-1 overflow-auto bg-gradient-to-br from-muted/20 via-background to-muted/30">
+          <header className="flex h-14 items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-sm px-6 sticky top-0 z-10">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
             </div>
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                     {theme === "light" && <Sun className="h-4 w-4" />}
                     {theme === "dark" && <Moon className="h-4 w-4" />}
                     {theme === "system" && <Monitor className="h-4 w-4" />}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="glass">
                   <DropdownMenuItem onClick={() => setTheme("light")}>
                     <Sun className="mr-2 h-4 w-4" />
                     Ljust
@@ -164,11 +164,11 @@ export default function DashboardLayout() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="hover:bg-primary/10">
                 <Bell className="h-4 w-4" />
               </Button>
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>{getInitials()}</AvatarFallback>
+              <Avatar className="h-8 w-8 ring-2 ring-primary/20">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-purple-400 text-primary-foreground">{getInitials()}</AvatarFallback>
               </Avatar>
             </div>
           </header>
