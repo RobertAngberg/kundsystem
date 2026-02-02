@@ -309,17 +309,17 @@ export default function DealsPage() {
             </div>
             <div className="space-y-2 min-h-[200px] rounded-lg border bg-muted/30 p-2">
               {getDealsByStage(stage.id).map((deal) => (
-                <Card key={deal.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                <Card key={deal.id} className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden">
                   <CardContent className="p-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <GripVertical className="h-4 w-4 text-muted-foreground inline mr-1" />
-                        <span className="font-medium text-sm truncate">{deal.title}</span>
+                    <div className="flex items-start justify-between gap-1">
+                      <div className="flex-1 min-w-0 overflow-hidden">
+                        <GripVertical className="h-4 w-4 text-muted-foreground inline-block mr-1 flex-shrink-0" />
+                        <span className="font-medium text-sm break-words line-clamp-2">{deal.title}</span>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 -mr-1"
+                        className="h-6 w-6 flex-shrink-0"
                         onClick={() => deleteDeal(deal.id)}
                       >
                         <Trash2 className="h-3 w-3" />
@@ -328,7 +328,7 @@ export default function DealsPage() {
                     <p className="text-xs text-muted-foreground truncate mt-1">
                       {deal.customer?.name || deal.customer?.email}
                     </p>
-                    <p className="text-sm font-semibold mt-2">{formatCurrency(deal.value)}</p>
+                    <p className="text-sm font-semibold text-primary mt-2">{formatCurrency(deal.value)}</p>
                     {stage.id !== "won" && stage.id !== "lost" && (
                       <Select
                         value={deal.stage}
