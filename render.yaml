@@ -4,7 +4,6 @@ services:
     name: kundsystem-api
     runtime: node
     region: frankfurt
-    plan: free
     rootDir: backend
     buildCommand: npm install && npm run build
     startCommand: npm run start:prod
@@ -29,7 +28,6 @@ services:
   - type: web
     name: kundsystem-frontend
     runtime: static
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
