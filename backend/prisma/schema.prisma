@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,16 +14,16 @@ model Customer {
   name       String?
   phone      String?
   companyId  Int?
-  company    Company?   @relation(fields: [companyId], references: [id])
-  ownerId    String?    // Supabase user id - vem "äger" kunden
-  owner      Profile?   @relation(fields: [ownerId], references: [id])
-  teamId     Int?       // Multi-tenant: vilket team kunden tillhör
-  team       Team?      @relation(fields: [teamId], references: [id])
-  activities Activity[]
-  deals      Deal[]
-  tasks      Task[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+  ownerId    String?
+  teamId     Int?
+  activities Activity[]
+  company    Company?   @relation(fields: [companyId], references: [id])
+  owner      Profile?   @relation(fields: [ownerId], references: [id])
+  team       Team?      @relation(fields: [teamId], references: [id])
+  deals      Deal[]
+  tasks      Task[]
 }
 
 model Company {
@@ -39,57 +36,57 @@ model Company {
   address     String?
   city        String?
   zipCode     String?
-  createdById String?    // Supabase user id - vem skapade företaget
-  createdBy   Profile?   @relation(fields: [createdById], references: [id])
-  teamId      Int?       // Multi-tenant: vilket team företaget tillhör
-  team        Team?      @relation(fields: [teamId], references: [id])
-  customers   Customer[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  teamId      Int?
+  createdById String?
+  createdBy   Profile?   @relation(fields: [createdById], references: [id])
+  team        Team?      @relation(fields: [teamId], references: [id])
+  customers   Customer[]
 }
 
 model Activity {
   id         Int      @id @default(autoincrement())
-  type       String   // "call", "email", "meeting", "note"
+  type       String
   content    String
   customerId Int
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
 
 model Profile {
-  id           String        @id // Supabase auth user id
+  id           String        @id
   email        String        @unique
   name         String?
-  role         String        @default("sales") // "admin", "sales", "viewer"
+  role         String        @default("sales")
   avatarUrl    String?
-  teamId       Int?          // Multi-tenant: vilket team användaren tillhör
-  team         Team?         @relation(fields: [teamId], references: [id])
-  customers    Customer[]
-  companies    Company[]
-  deals        Deal[]
-  tasks        Task[]
-  activityLogs ActivityLog[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  teamId       Int?
+  activityLogs ActivityLog[]
+  companies    Company[]
+  customers    Customer[]
+  deals        Deal[]
+  team         Team?         @relation(fields: [teamId], references: [id])
+  tasks        Task[]
 }
 
 model Deal {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   title       String
-  value       Float    @default(0)
-  stage       String   @default("lead") // "lead", "contact", "proposal", "negotiation", "won", "lost"
+  value       Float     @default(0)
+  stage       String    @default("lead")
   customerId  Int
-  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   ownerId     String?
-  owner       Profile? @relation(fields: [ownerId], references: [id])
-  teamId      Int?     // Multi-tenant: vilket team dealen tillhör
-  team        Team?    @relation(fields: [teamId], references: [id])
   description String?
   closedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  teamId      Int?
+  customer    Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  owner       Profile?  @relation(fields: [ownerId], references: [id])
+  team        Team?     @relation(fields: [teamId], references: [id])
   tasks       Task[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 model Task {
@@ -98,46 +95,45 @@ model Task {
   description String?
   dueDate     DateTime?
   completed   Boolean   @default(false)
-  priority    String    @default("medium") // "low", "medium", "high"
+  priority    String    @default("medium")
   customerId  Int?
-  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  dealId      Int?
-  deal        Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
   ownerId     String?
-  owner       Profile?  @relation(fields: [ownerId], references: [id])
-  teamId      Int?      // Multi-tenant: vilket team uppgiften tillhör
-  team        Team?     @relation(fields: [teamId], references: [id])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  dealId      Int?
+  teamId      Int?
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  deal        Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  owner       Profile?  @relation(fields: [ownerId], references: [id])
+  team        Team?     @relation(fields: [teamId], references: [id])
 }
 
 model ActivityLog {
-  id          Int      @id @default(autoincrement())
-  action      String   // "created", "updated", "deleted", "stage_changed"
-  entityType  String   // "customer", "company", "deal", "task"
-  entityId    Int
-  entityName  String   // Namnet på entiteten för visning
-  oldValue    String?  // För ändringar, t.ex. gammalt steg
-  newValue    String?  // För ändringar, t.ex. nytt steg
-  userId      String?  // Vem som gjorde ändringen
-  user        Profile? @relation(fields: [userId], references: [id])
-  teamId      Int?     // Multi-tenant: vilket team aktiviteten tillhör
-  team        Team?    @relation(fields: [teamId], references: [id])
-  createdAt   DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  action     String
+  entityType String
+  entityId   Int
+  entityName String
+  oldValue   String?
+  newValue   String?
+  userId     String?
+  createdAt  DateTime @default(now())
+  teamId     Int?
+  team       Team?    @relation(fields: [teamId], references: [id])
+  user       Profile? @relation(fields: [userId], references: [id])
 }
 
-// Multi-tenant: Team/Organisation
 model Team {
   id           Int           @id @default(autoincrement())
   name         String
-  slug         String        @unique // URL-vänligt namn, t.ex. "acme-corp"
+  slug         String        @unique
   description  String?
-  members      Profile[]
-  customers    Customer[]
-  companies    Company[]
-  deals        Deal[]
-  tasks        Task[]
-  activityLogs ActivityLog[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  activityLogs ActivityLog[]
+  companies    Company[]
+  customers    Customer[]
+  deals        Deal[]
+  members      Profile[]
+  tasks        Task[]
 }
